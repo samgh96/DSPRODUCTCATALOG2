@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.tmf.dsmapi.catalog.entity.catalog.CatalogEntity;
 import org.tmf.dsmapi.catalog.entity.product.ProductOfferingEntity;
 import org.tmf.dsmapi.catalog.exception.IllegalLifecycleStatusException;
 import org.tmf.dsmapi.catalog.hub.service.productOffering.ProductOfferingEventPublisherLocal;
@@ -28,6 +29,7 @@ import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
 import org.tmf.dsmapi.catalog.service.AbstractFacadeREST;
 import org.tmf.dsmapi.catalog.service.ServiceConstants;
+import org.tmf.dsmapi.catalog.service.catalog.CatalogFacade;
 import org.tmf.dsmapi.commons.ParsedVersion;
 import org.tmf.dsmapi.commons.QueryParameterParser;
 import org.tmf.dsmapi.commons.exceptions.BadUsageException;
@@ -48,6 +50,9 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     
      @EJB
     ProductOfferingEventPublisherLocal publisher;
+     
+      @EJB
+    CatalogFacade cmanager;
 
     /*
      *
@@ -75,6 +80,11 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:create(catalogId: {0})", catalogId);
         System.out.println("URIINFO=" + uriInfo.getPath());
+        
+        List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
 
         if (input == null) {
             logger.log(Level.FINE, "input is required");
@@ -142,7 +152,10 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     @Produces({MediaType.APPLICATION_JSON})
     public Response edit(@PathParam("catalogId") String catalogId, @PathParam("entityId") String entityId, ProductOfferingEntity input, @Context UriInfo uriInfo) throws IllegalLifecycleStatusException {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:edit(catalogId: {0}, entityId: {1})", new Object[]{catalogId, entityId});
-
+         List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return edit_(catalogId, entityId, null, input, uriInfo);
     }
 
@@ -155,7 +168,10 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     @Produces({MediaType.APPLICATION_JSON})
     public Response edit(@PathParam("catalogId") String catalogId, @PathParam("entityId") String entityId, @PathParam("entityVersion") ParsedVersion entityVersion, ProductOfferingEntity input, @Context UriInfo uriInfo) throws IllegalLifecycleStatusException {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:edit(catalogId: {0}, entityId: {1}, entityVersion: {2})", new Object[]{catalogId, entityId, entityVersion});
-
+        List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return edit_(catalogId, entityId, null, input, uriInfo);
     }
 
@@ -166,7 +182,10 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     @Path("{entityId}")
     public Response remove(@PathParam("catalogId") String catalogId, @PathParam("entityId") String entityId) {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:remove(catalogId: {0}, entityId: {1})", new Object[]{catalogId, entityId});
-
+        List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return remove_(catalogId,entityId, null);
     }
 
@@ -177,7 +196,10 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     @Path("{entityId}:({entityVersion})")
     public Response remove(@PathParam("catalogId") String catalogId, @PathParam("entityId") String entityId, @PathParam("entityVersion") ParsedVersion entityVersion) {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:remove(catalogId: {0}, entityId: {1}, entityVersion: {2})", new Object[]{catalogId, entityId, entityVersion});
-
+        List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return remove_(catalogId,entityId, null);
     }
 
@@ -189,9 +211,10 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     public Response find(@PathParam("catalogId") String catalogId, @QueryParam("depth") int depth, @Context UriInfo uriInfo) throws BadUsageException {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:find(catalogId: {0}, depth: {1})", new Object[]{catalogId, depth});
 
-        //return find_(catalogId,null, null, depth, uriInfo);
-        
-         //add Query Parameter catalogId={catalogId}
+        List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
 
         QueryParameterParser queryParameterParser = new QueryParameterParser(uriInfo.getRequestUri().getQuery());
         MultivaluedMap<String, String> tagsWithValue = queryParameterParser.getTagsWithValue();
@@ -224,7 +247,10 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     @Produces({MediaType.APPLICATION_JSON})
     public Response findById(@PathParam("catalogId") String catalogId, @PathParam("entityId") String entityId, @QueryParam("depth") int depth, @Context UriInfo uriInfo) {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:find(catalogId: {0}, entityId: {1}, depth: {2})", new Object[]{catalogId, entityId, depth});
-
+        List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return find_(catalogId,entityId, null, depth, uriInfo);
     }
 
@@ -236,7 +262,10 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
     @Produces({MediaType.APPLICATION_JSON})
     public Response find(@PathParam("catalogId") String catalogId, @PathParam("entityId") String entityId, @PathParam("entityVersion") ParsedVersion entityVersion, @QueryParam("depth") int depth, @Context UriInfo uriInfo) {
         logger.log(Level.FINE, "ProductOfferingInCatalogIdFacadeREST:find(catalogId: {0}, entityId: {1}, entityVersion: {2}, depth: {3})", new Object[]{catalogId, entityId, entityVersion, depth});
-
+        List<CatalogEntity> centities = cmanager.findCatalogById(catalogId, null);
+        if (centities == null || centities.size() <= 0) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
          return find_(catalogId,entityId, null, depth, uriInfo);
     }
 
