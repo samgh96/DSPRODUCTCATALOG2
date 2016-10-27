@@ -49,7 +49,7 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name = "NAME", nullable = true)
     private String name;
 
-    @Column(name = "DESCRIPTION", nullable = true)
+    @Column(name = "DESCRIPTION", nullable = true, length=5000)
     private String description;
 
     @Column(name = "LAST_UPDATE", nullable = true)
