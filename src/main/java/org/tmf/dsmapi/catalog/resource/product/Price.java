@@ -27,19 +27,19 @@ import org.tmf.dsmapi.commons.Utilities;
 public class Price implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    @Column(name = "TAX_INCLUDED_AMOUNT", nullable = true)
+    @Column(name = "TAX_INCLUDED_AMOUNT", nullable = true, precision = 38, scale = 2)
     BigDecimal taxIncludedAmount;
 
-    @Column(name = "DUTY_FREE_AMOUNT", nullable = true)
+    @Column(name = "DUTY_FREE_AMOUNT", nullable = true, precision = 38, scale = 2)
     BigDecimal dutyFreeAmount;
 
-    @Column(name = "TAX_RATE", nullable = true)
+    @Column(name = "TAX_RATE", nullable = true, precision = 38, scale = 2)
     BigDecimal taxRate;
 
     @Column(name = "CURRENCY_CODE", nullable = true)
     String currencyCode;
     
-    @Column(name = "PERCENTAGE", nullable = true)
+    @Column(name = "PERCENTAGE", nullable = true, precision = 5, scale = 2)
     BigDecimal percentage;
 
     public Price() {

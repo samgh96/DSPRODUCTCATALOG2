@@ -30,16 +30,16 @@ public class AlterationPrice implements Serializable {
 
     private final static Logger logger = Logger.getLogger(ProductOffering.class.getName());
 
-    @Column(name = "PRICE_ALT_TAX_INCLUDED_AMOUNT", nullable = true)
+    @Column(name = "PRICE_ALT_TAX_INCLUDED_AMOUNT", nullable = true, precision = 38, scale = 2)
     BigDecimal taxIncludedAmount;
 
-    @Column(name = "PRICE_ALT_DUTY_FREE_AMOUNT", nullable = true)
+    @Column(name = "PRICE_ALT_DUTY_FREE_AMOUNT", nullable = true, precision = 38, scale = 2)
     BigDecimal dutyFreeAmount;
 
-    @Column(name = "PRICE_ALT_TAX_RATE", nullable = true)
+    @Column(name = "PRICE_ALT_TAX_RATE", nullable = true, precision = 38, scale = 2)
     BigDecimal taxRate;
 
-    @Column(name = "PRICE_ALT_PERCENTAGE", nullable = true)
+    @Column(name = "PRICE_ALT_PERCENTAGE", nullable = true, precision = 5, scale = 2)
     String percentage;
 
     public AlterationPrice() {
