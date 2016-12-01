@@ -40,7 +40,7 @@ public class AlterationPrice implements Serializable {
     BigDecimal taxRate;
 
     @Column(name = "PRICE_ALT_PERCENTAGE", nullable = true, precision = 5, scale = 2)
-    String percentage;
+    BigDecimal percentage;
 
     public AlterationPrice() {
     }
@@ -69,11 +69,11 @@ public class AlterationPrice implements Serializable {
         this.taxRate = taxRate;
     }
 
-    public String getPercentage() {
+    public BigDecimal getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(String percentage) {
+    public void setPercentage(BigDecimal percentage) {
         this.percentage = percentage;
     }
 
@@ -131,7 +131,7 @@ public class AlterationPrice implements Serializable {
         alterationPrice.taxIncludedAmount = new BigDecimal(13.00);
         alterationPrice.dutyFreeAmount = new BigDecimal(12.20);
         alterationPrice.taxRate = new BigDecimal(14.01);
-        alterationPrice.percentage = "0";
+        alterationPrice.percentage = new BigDecimal(0);
 
         return alterationPrice;
     }
