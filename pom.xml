@@ -70,7 +70,7 @@
     </dependencies>
 
     <build>
-        <finalName>DSPRODUCTCATALOG2</finalName>
+        <finalName>DSProductCatalog</finalName>
        
         <plugins>
             <plugin>
