@@ -3,6 +3,7 @@ package org.tmf.dsmapi.catalog.resource.product;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -61,7 +62,10 @@ public class ProductSpecCharacteristic implements Serializable {
 
     private String id;
     private String name;
+
+    @Column(name = "DESCRIPTION", nullable = true, length=5000)
     private String description;
+
     private CharacteristicValueType valueType;
     private Boolean configurable;
     private TimeRange validFor;

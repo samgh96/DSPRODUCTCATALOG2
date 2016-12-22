@@ -30,17 +30,17 @@ public class AlterationPrice implements Serializable {
 
     private final static Logger logger = Logger.getLogger(ProductOffering.class.getName());
 
-    @Column(name = "PRICE_ALT_TAX_INCLUDED_AMOUNT", nullable = true)
+    @Column(name = "PRICE_ALT_TAX_INCLUDED_AMOUNT", nullable = true, precision = 38, scale = 2)
     BigDecimal taxIncludedAmount;
 
-    @Column(name = "PRICE_ALT_DUTY_FREE_AMOUNT", nullable = true)
+    @Column(name = "PRICE_ALT_DUTY_FREE_AMOUNT", nullable = true, precision = 38, scale = 2)
     BigDecimal dutyFreeAmount;
 
-    @Column(name = "PRICE_ALT_TAX_RATE", nullable = true)
+    @Column(name = "PRICE_ALT_TAX_RATE", nullable = true, precision = 38, scale = 2)
     BigDecimal taxRate;
 
-    @Column(name = "PRICE_ALT_PERCENTAGE", nullable = true)
-    String percentage;
+    @Column(name = "PRICE_ALT_PERCENTAGE", nullable = true, precision = 5, scale = 2)
+    BigDecimal percentage;
 
     public AlterationPrice() {
     }
@@ -69,11 +69,11 @@ public class AlterationPrice implements Serializable {
         this.taxRate = taxRate;
     }
 
-    public String getPercentage() {
+    public BigDecimal getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(String percentage) {
+    public void setPercentage(BigDecimal percentage) {
         this.percentage = percentage;
     }
 
@@ -131,7 +131,7 @@ public class AlterationPrice implements Serializable {
         alterationPrice.taxIncludedAmount = new BigDecimal(13.00);
         alterationPrice.dutyFreeAmount = new BigDecimal(12.20);
         alterationPrice.taxRate = new BigDecimal(14.01);
-        alterationPrice.percentage = "0";
+        alterationPrice.percentage = new BigDecimal(0);
 
         return alterationPrice;
     }
