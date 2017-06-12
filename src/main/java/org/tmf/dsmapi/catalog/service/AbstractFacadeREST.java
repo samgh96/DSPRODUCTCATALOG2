@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriInfo;
 import org.tmf.dsmapi.catalog.resource.AbstractEntity;
@@ -23,7 +24,7 @@ import org.tmf.dsmapi.commons.ReferencedEntityGetter;
  * @author bahman.barzideh
  *
  */
-public abstract class AbstractFacadeREST<T> {
+public abstract class AbstractFacadeREST<T extends AbstractEntity> {
     private final FieldSelector fieldSelector;
     private final ReferencedEntityGetter<T> referencedEntityGetter;
 
@@ -155,21 +156,38 @@ public abstract class AbstractFacadeREST<T> {
     protected ArrayList<Object> selectFields(Set<T> inputEntities, Set<String> outputFields) {
        outputFields.add(ServiceConstants.ID_FIELD);
 
-       ArrayList<Object> outputEntities = new ArrayList<Object>();
-       for (T entity : inputEntities) {
+       ArrayList<Object> outputEntities = new ArrayList<>();
+       inputEntities.stream().forEach((entity) -> {
            outputEntities.add(fieldSelector.selectFields(entity, outputFields));
-       }
+        });
 
        return outputEntities;
     }
 
+    protected ArrayList<Object> selectFields(List<T> inputEntities, Set<String> outputFields) {
+       outputFields.add(ServiceConstants.ID_FIELD);
+
+       ArrayList<Object> outputEntities = new ArrayList<>();
+       inputEntities.stream().forEach((entity) -> {
+           outputEntities.add(fieldSelector.selectFields(entity, outputFields));
+        });
+
+       return outputEntities;
+    }
+
+    protected List<T> sortByProvidedIds (List<String> ids, List<T> entities) {
+        return entities.stream()
+                .sorted((e1, e2) ->
+                        Integer.compare(ids.indexOf(e1.getId()), ids.indexOf(e2.getId())))
+                .collect(Collectors.toList());
+    }
+
     private List<String> breakFieldList_(String input) {
         if (input == null) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
         String tokenArray [] = input.split(",");
         return Arrays.asList(tokenArray);
     }
-
 }

@@ -1,10 +1,12 @@
 package org.tmf.dsmapi.catalog.service.productOffering;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -180,7 +182,6 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
     @Produces({MediaType.APPLICATION_JSON})
     public Response find(@QueryParam("depth") int depth, @Context UriInfo uriInfo) throws BadUsageException {
         logger.log(Level.FINE, "ProductOfferingFacadeREST:find(depth: {0})", depth);
-
         QueryParameterParser queryParameterParser = new QueryParameterParser(uriInfo.getRequestUri().getQuery());
 
         // Remove known parameters before running the query.
@@ -194,12 +195,22 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
 
         getReferencedEntities(entities, depth);
 
-        if (outputFields.isEmpty() || outputFields.contains(ServiceConstants.ALL_FIELDS)) {
-            return Response.ok(entities).build();
+        // Start using list to have an ordered object
+        List<ProductOfferingEntity> result = new ArrayList<>(entities);
+
+        if (uriInfo.getQueryParameters().containsKey("id")) {
+            String[] idValues = uriInfo.getQueryParameters().get("id").get(0).split(",");
+
+            List<String> ids = Arrays.asList(idValues);
+            result = sortByProvidedIds(ids, result);
         }
 
-       ArrayList<Object> outputEntities = selectFields(entities, outputFields);
-       return Response.ok(outputEntities).build();
+        if (outputFields.isEmpty() || outputFields.contains(ServiceConstants.ALL_FIELDS)) {
+            return Response.ok(result).build();
+        }
+
+        List<Object> filteredOutput = selectFields(result, outputFields);
+        return Response.ok(filteredOutput).build();
     }
 
     /*
