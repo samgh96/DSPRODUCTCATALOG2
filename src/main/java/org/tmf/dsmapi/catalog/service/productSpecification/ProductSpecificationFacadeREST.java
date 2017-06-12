@@ -1,6 +1,7 @@
 package org.tmf.dsmapi.catalog.service.productSpecification;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -78,12 +79,12 @@ public class ProductSpecificationFacadeREST extends AbstractFacadeREST<ProductSp
 
         input.setCreateDefaults();
 
-        if (input.isValid() == false) {
+        if (!input.isValid()) {
             logger.log(Level.FINE, "input is not valid");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        if (input.canLifecycleTransitionFrom (null) == false) {
+        if (!input.canLifecycleTransitionFrom (null)) {
             logger.log(Level.FINE, "invalid lifecycleStatus: {0}", input.getLifecycleStatus());
             throw new IllegalLifecycleStatusException(LifecycleStatus.transitionableStatues(null));
         }
@@ -193,11 +194,21 @@ public class ProductSpecificationFacadeREST extends AbstractFacadeREST<ProductSp
 
         getReferencedEntities(entities, depth);
 
-        if (outputFields.isEmpty() || outputFields.contains(ServiceConstants.ALL_FIELDS)) {
-            return Response.ok(entities).build();
+        // Start using list to have an ordered object
+        List<ProductSpecificationEntity> result = new ArrayList<>(entities);
+
+        if (uriInfo.getQueryParameters().containsKey("id")) {
+            String[] idValues = uriInfo.getQueryParameters().get("id").get(0).split(",");
+
+            List<String> ids = Arrays.asList(idValues);
+            result = sortByProvidedIds(ids, result);
         }
 
-       ArrayList<Object> outputEntities = selectFields(entities, outputFields);
+        if (outputFields.isEmpty() || outputFields.contains(ServiceConstants.ALL_FIELDS)) {
+            return Response.ok(result).build();
+        }
+
+       List<Object> outputEntities = selectFields(entities, outputFields);
        return Response.ok(outputEntities).build();
     }
 
