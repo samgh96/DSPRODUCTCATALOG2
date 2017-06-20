@@ -102,27 +102,12 @@ public class Attachment implements Serializable {
         }
 
         final Attachment other = (Attachment) object;
-        if (Utilities.areEqual(this.id, other.id) == false) {
-            return false;
-        }
 
-        if (Utilities.areEqual(this.href, other.href) == false) {
-            return false;
-        }
-
-        if (Utilities.areEqual(this.description, other.description) == false) {
-            return false;
-        }
-
-        if (Utilities.areEqual(this.type, other.type) == false) {
-            return false;
-        }
-
-        if (Utilities.areEqual(this.url, other.url) == false) {
-            return false;
-        }
-
-        return true;
+        return Utilities.areEqual(this.id, other.id) &&
+                Utilities.areEqual(this.href, other.href) &&
+                Utilities.areEqual(this.description, other.description) &&
+                Utilities.areEqual(this.type, other.type) &&
+                Utilities.areEqual(this.url, other.url);
     }
 
     @Override

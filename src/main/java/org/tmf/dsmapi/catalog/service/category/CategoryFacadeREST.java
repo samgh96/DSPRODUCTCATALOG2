@@ -92,7 +92,7 @@ public class CategoryFacadeREST extends AbstractFacadeREST<CategoryEntity> {
         input.configureCatalogIdentifier();
         manager.create(input);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.edit(input);
 
         publisher.createNotification(input, null, null);
@@ -279,7 +279,7 @@ public class CategoryFacadeREST extends AbstractFacadeREST<CategoryEntity> {
         input.configureCatalogIdentifier();
 
         if (input.keysMatch(entity)) {
-            input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+            input.setHref(buildHref(uriInfo, input.getId(), null));
             manager.edit(input);
 
             publisher.updateNotification(input, null, null);
@@ -294,7 +294,7 @@ public class CategoryFacadeREST extends AbstractFacadeREST<CategoryEntity> {
         manager.remove(entity);
         manager.create(input);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.edit(input);
 
         publisher.updateNotification(input, null, null);
@@ -333,7 +333,7 @@ public class CategoryFacadeREST extends AbstractFacadeREST<CategoryEntity> {
 
         if (input.getVersion() == null) {
             input.setVersion(entity.getVersion());
-            input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+            input.setHref(buildHref(uriInfo, input.getId(), null));
             manager.edit(input);
 
             publisher.valueChangedNotification(input, null, null);
@@ -347,7 +347,7 @@ public class CategoryFacadeREST extends AbstractFacadeREST<CategoryEntity> {
 
         manager.remove(entity);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.create(input);
 
         publisher.valueChangedNotification(input, null, null);

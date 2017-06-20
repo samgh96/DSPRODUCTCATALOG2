@@ -106,7 +106,7 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
         input.configureCatalogIdentifier();
         input.setCatalogId(catalogId);
         manager.create(input);
-        String href = buildHref(uriInfo, input.getId(), input.getParsedVersion());
+        String href = buildHref(uriInfo, input.getId(), null);
         String rhref = href.replaceFirst("productOffering", "catalog/"+catalogId+ "/productOffering" );
 
         input.setHref(rhref);
@@ -324,7 +324,7 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
         if (input.keysMatch(entity)) {
             
             
-        String href = buildHref(uriInfo, input.getId(), input.getParsedVersion());
+        String href = buildHref(uriInfo, input.getId(), null);
         String rhref = href.replaceFirst("productOffering", "catalog/"+catalogId+ "/productOffering" );
         input.setHref(rhref);
             manager.edit(input);
@@ -342,7 +342,7 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
         manager.create(input);
 
        
-        String href = buildHref(uriInfo, input.getId(), input.getParsedVersion());
+        String href = buildHref(uriInfo, input.getId(), null);
         String rhref = href.replaceFirst("productOffering", "catalog/"+catalogId+ "/productOffering" );
         input.setHref(rhref);
         
@@ -384,7 +384,7 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
 
         if (input.getVersion() == null) {
             input.setVersion(entity.getVersion());
-            String href = buildHref(uriInfo, input.getId(), input.getParsedVersion());
+            String href = buildHref(uriInfo, input.getId(), null);
         String rhref = href.replaceFirst("productOffering", "catalog/"+catalogId+ "/productOffering" );
         input.setHref(rhref);
             manager.edit(input);
@@ -400,7 +400,7 @@ public class ProductOfferingInCatalogIdFacadeREST extends AbstractFacadeREST<Pro
 
         manager.remove(entity);
 
-       String href = buildHref(uriInfo, input.getId(), input.getParsedVersion());
+       String href = buildHref(uriInfo, input.getId(), null);
         String rhref = href.replaceFirst("productOffering", "catalog/"+catalogId+ "/productOffering" );
         input.setHref(rhref);
         manager.create(input);

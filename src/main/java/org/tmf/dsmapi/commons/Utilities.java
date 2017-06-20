@@ -14,30 +14,18 @@ public class Utilities {
 
     public static boolean areEqual(Object objectOne, Object objectTwo) {
         if (objectOne == null) {
-            return (objectTwo == null) ? true : false;
+            return objectTwo == null;
         }
 
         return objectOne.equals(objectTwo);
     }
 
     public static boolean hasValue(String input) {
-        if (input == null) {
-            return false;
-        }
-
-        if (input.trim().length() <= 0) {
-            return false;
-        }
-
-        return true;
+        return input != null && input.trim().length() > 0;
     }
 
     public static boolean hasContents(List<?> input) {
-        if (input == null || input.size() <= 0) {
-            return false;
-        }
-
-        return true;
+        return input != null && input.size() > 0;
     }
 
 }

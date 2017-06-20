@@ -90,7 +90,7 @@ public abstract class AbstractFacadeREST<T extends AbstractEntity> {
             return null;
         }
 
-        if (basePath.endsWith("/") == false) {
+        if (!basePath.endsWith("/")) {
             basePath += "/";
         }
 
@@ -112,7 +112,7 @@ public abstract class AbstractFacadeREST<T extends AbstractEntity> {
      *
      */
     public Set<String> getFieldSet(QueryParameterParser queryParameterParser) {
-        Set<String> fieldSet = new HashSet<String>();
+        Set<String> fieldSet = new HashSet<>();
         if (queryParameterParser == null) {
             return fieldSet;
         }
