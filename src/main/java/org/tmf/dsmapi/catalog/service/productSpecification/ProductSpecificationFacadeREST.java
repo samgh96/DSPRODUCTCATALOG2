@@ -92,7 +92,7 @@ public class ProductSpecificationFacadeREST extends AbstractFacadeREST<ProductSp
         input.configureCatalogIdentifier();
         manager.create(input);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.edit(input);
 
         publisher.createNotification(input, null, null);
@@ -289,7 +289,7 @@ public class ProductSpecificationFacadeREST extends AbstractFacadeREST<ProductSp
         input.configureCatalogIdentifier();
 
         if (input.keysMatch(entity)) {
-            input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+            input.setHref(buildHref(uriInfo, input.getId(), null));
             manager.edit(input);
             return Response.status(Response.Status.CREATED).entity(entity).build();
         }
@@ -304,7 +304,7 @@ public class ProductSpecificationFacadeREST extends AbstractFacadeREST<ProductSp
         manager.remove(entity);
         manager.create(input);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.edit(input);
 
         publisher.updateNotification(input, null, null);
@@ -343,11 +343,15 @@ public class ProductSpecificationFacadeREST extends AbstractFacadeREST<ProductSp
 
         if (input.getVersion() == null) {
             input.setVersion(entity.getVersion());
-            input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
-            manager.edit(input);
+
+            manager.remove(entity);
+            manager.flush();
+
+            input.setHref(buildHref(uriInfo, input.getId(), null));
+            manager.create(input);
             
             publisher.valueChangedNotification(input, null, null);
-            return Response.status(Response.Status.CREATED).entity(entity).build();
+            return Response.status(Response.Status.CREATED).entity(input).build();
         }
 
         if (input.hasHigherVersionThan(entity) == false) {
@@ -357,7 +361,7 @@ public class ProductSpecificationFacadeREST extends AbstractFacadeREST<ProductSp
 
         manager.remove(entity);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.create(input);
 
         publisher.valueChangedNotification(input, null, null);

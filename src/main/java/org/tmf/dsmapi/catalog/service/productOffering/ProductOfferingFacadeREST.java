@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -94,7 +93,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
         input.configureCatalogIdentifier();
         manager.create(input);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.edit(input);
 
         publisher.createNotification(input, null, null);
@@ -290,7 +289,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
         input.configureCatalogIdentifier();
 
         if (input.keysMatch(entity)) {
-            input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+            input.setHref(buildHref(uriInfo, input.getId(), null));
             manager.edit(input);
             
             publisher.updateNotification(input, null, null);
@@ -305,7 +304,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
         manager.remove(entity);
         manager.create(input);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.edit(input);
 
         publisher.updateNotification(input, null, null);
@@ -344,7 +343,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
 
         if (input.getVersion() == null) {
             input.setVersion(entity.getVersion());
-            input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+            input.setHref(buildHref(uriInfo, input.getId(), null));
             manager.edit(input);
             
             publisher.valueChangedNotification(input, null, null);
@@ -358,7 +357,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
 
         manager.remove(entity);
 
-        input.setHref(buildHref(uriInfo, input.getId(), input.getParsedVersion()));
+        input.setHref(buildHref(uriInfo, input.getId(), null));
         manager.create(input);
 
         publisher.valueChangedNotification(input, null, null);

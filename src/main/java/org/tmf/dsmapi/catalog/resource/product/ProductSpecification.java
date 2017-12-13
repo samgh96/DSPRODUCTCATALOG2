@@ -427,11 +427,11 @@ public class ProductSpecification extends AbstractCatalogEntity implements Seria
             return false;
         }
 
-        if (Utilities.areEqual(this.attachment, other.attachment) == false) {
+        if (Utilities.areEqual(this.relatedParty, other.relatedParty) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.relatedParty, other.relatedParty) == false) {
+        if (Utilities.areEqual(this.attachment, other.attachment) == false) {
             return false;
         }
 

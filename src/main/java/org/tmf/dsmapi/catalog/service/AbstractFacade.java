@@ -71,6 +71,10 @@ public abstract class AbstractFacade<T> {
         getEntityManager().clear();
     }
 
+    public void flush() {
+        getEntityManager().flush();
+    }
+
     public int count() {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
         Root<T> rt = cq.from(entityClass);
