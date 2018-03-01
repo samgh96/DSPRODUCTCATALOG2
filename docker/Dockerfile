@@ -8,11 +8,12 @@ RUN apt-get update; \
     wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.39.tar.gz; \
     tar -xvf mysql-connector-java-5.1.39.tar.gz; \
     cp ./mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar glassfish4/glassfish/domains/domain1/lib; \
-    mkdir /catalog;
+    mkdir /catalog; \
+    mkdir -p /etc/default/tmf/
 
 COPY ./deploy.sh /
 
-VOLUME /catalog
+VOLUME ["/catalog", "/etc/default/tmf/"]
 
 EXPOSE 8080 4848
 

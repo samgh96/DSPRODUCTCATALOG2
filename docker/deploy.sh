@@ -20,4 +20,4 @@ asadmin create-jdbc-connection-pool --restype java.sql.Driver --driverclassname 
 
 asadmin create-jdbc-resource --connectionpoolid DSPRODUCTCATALOG2 jdbc/pcatv2
 
-asadmin deploy --force false --contextroot DSProductCatalog --name DSProductCatalog /catalog/target/DSProductCatalog.war
+asadmin deploy --force true --contextroot DSProductCatalog --name DSProductCatalog /catalog/target/DSProductCatalog.war
