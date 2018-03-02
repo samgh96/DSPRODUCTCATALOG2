@@ -33,6 +33,10 @@ public class PropertiesSingleton {
     public String getServer() {
         if (server == null && props != null) {
             server = (String) props.get("server");
+
+            if (server != null && !server.endsWith("/")) {
+                server += "/";
+            }
         }
         return server;
     }

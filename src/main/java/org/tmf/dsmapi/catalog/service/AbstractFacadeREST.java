@@ -96,17 +96,26 @@ public abstract class AbstractFacadeREST<T extends AbstractEntity> {
             // If the URL is not configured in the properties use UriInfo object
             URI uri = (uriInfo != null) ? uriInfo.getBaseUri() : null;
             baseUrl = (uri != null) ? uri.toString() : null;
+
+            if (baseUrl == null) {
+                return null;
+            }
+
+            if (!baseUrl.endsWith("/")) {
+                baseUrl += "/";
+            }
+
+            baseUrl += getRelativeEntityContext() + "/";
+        } else {
+            // The server info do not include the path
+            String [] baseUriParts = uriInfo.getBaseUri().toString().split("/");
+            baseUrl += baseUriParts[3] + "/" + baseUriParts[4] + "/" + baseUriParts[5] + "/" + baseUriParts[6]  + "/" + uriInfo.getPath();
+
+            if (!baseUrl.endsWith("/")) {
+                baseUrl += "/";
+            }
         }
 
-        if (baseUrl == null) {
-            return null;
-        }
-
-        if (!baseUrl.endsWith("/")) {
-            baseUrl += "/";
-        }
-
-        baseUrl += getRelativeEntityContext() + "/";
         if (id == null || id.length() <= 0) {
             return (baseUrl);
         }
