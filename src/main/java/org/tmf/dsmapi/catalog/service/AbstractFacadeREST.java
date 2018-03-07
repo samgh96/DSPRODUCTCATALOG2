@@ -2,6 +2,8 @@ package org.tmf.dsmapi.catalog.service;
 
 import javax.ejb.EJB;
 import java.net.URI;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -89,32 +91,19 @@ public abstract class AbstractFacadeREST<T extends AbstractEntity> {
      *
      */
     public String buildHref(UriInfo uriInfo, String id, ParsedVersion parsedVersion) {
-        // Get default server param
-        String baseUrl = properties.getServer();
+        // If the URL is not configured in the properties use UriInfo object
+        URI uri = (uriInfo != null) ? uriInfo.getBaseUri() : null;
+        String baseUrl = (uri != null) ? uri.toString() : null;
 
         if (baseUrl == null) {
-            // If the URL is not configured in the properties use UriInfo object
-            URI uri = (uriInfo != null) ? uriInfo.getBaseUri() : null;
-            baseUrl = (uri != null) ? uri.toString() : null;
-
-            if (baseUrl == null) {
-                return null;
-            }
-
-            if (!baseUrl.endsWith("/")) {
-                baseUrl += "/";
-            }
-
-            baseUrl += getRelativeEntityContext() + "/";
-        } else {
-            // The server info do not include the path
-            String [] baseUriParts = uriInfo.getBaseUri().toString().split("/");
-            baseUrl += baseUriParts[3] + "/" + baseUriParts[4] + "/" + baseUriParts[5] + "/" + baseUriParts[6]  + "/" + uriInfo.getPath();
-
-            if (!baseUrl.endsWith("/")) {
-                baseUrl += "/";
-            }
+            return null;
         }
+
+        if (!baseUrl.endsWith("/")) {
+            baseUrl += "/";
+        }
+
+        baseUrl += getRelativeEntityContext() + "/";
 
         if (id == null || id.length() <= 0) {
             return (baseUrl);
@@ -122,11 +111,28 @@ public abstract class AbstractFacadeREST<T extends AbstractEntity> {
 
         baseUrl += id;
         String version = (parsedVersion != null) ? parsedVersion.getExternalView() : null;
-        if (version == null || version.length() <= 0) {
-            return baseUrl;
+        if (version != null && version.length() > 0) {
+            baseUrl +=  ":(" + version + ")";
         }
 
-        return baseUrl + ":(" + version + ")";
+        // Check if a server has been configured
+        String defaultServer = properties.getServer();
+
+        if (defaultServer != null) {
+            // Replace protocol and host in the HREF to use configured server
+            URL defURL;
+            URL queriedURL;
+            try {
+                defURL = new URL(defaultServer);
+                queriedURL = new URL(baseUrl);
+            } catch(MalformedURLException e) {
+                return null;
+            }
+
+            baseUrl = defURL.getProtocol() + "://" + defURL.getAuthority() + queriedURL.getPath();
+        }
+
+        return baseUrl;
     }
 
     /*
