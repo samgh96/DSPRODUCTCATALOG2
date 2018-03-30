@@ -1,478 +1,228 @@
 package org.tmf.dsmapi.catalog.resource.product;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
+import javax.persistence.Embeddable;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.tmf.dsmapi.catalog.resource.AbstractCatalogEntity;
-import org.tmf.dsmapi.catalog.resource.CatalogReference;
-import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
-import org.tmf.dsmapi.catalog.resource.ServiceLevelAgreement;
 import org.tmf.dsmapi.catalog.resource.TimeRange;
-import org.tmf.dsmapi.catalog.resource.category.Category;
-import org.tmf.dsmapi.catalog.resource.resource.ResourceCandidate;
-import org.tmf.dsmapi.catalog.resource.service.ServiceCandidate;
 import org.tmf.dsmapi.commons.Utilities;
-import org.tmf.dsmapi.commons.annotation.EntityReferenceProperty;
 
 /**
  *
- * @author pierregauthier
+ * @author bahman.barzideh
  *
  * {
- *     "id": "42",
- *     "version": "3.43",
- *     "href": "http://serverlocation:port/catalogManagement/productOffering/42",
- *     "name": "Virtual Storage Medium",
- *     "description": "Virtual Storage Medium",
- *     "lastUpdate": "2013-04-19T16:42:23-04:00",
- *     "lifecycleStatus": "Active",
+ *     "name": "12 Month",
+ *     "description": "12 month contract",
+ *     "duration": "12",
  *     "validFor": {
  *         "startDateTime": "2013-04-19T16:42:23-04:00",
  *         "endDateTime": "2013-06-19T00:00:00-04:00"
- *     },
- *     "isBundle": "true",
- *     "category": [
- *         {
- *             "id": "12",
- *             "version": "2.0",
- *             "href": "http://serverlocation:port/catalogManagement/category/12",
- *             "name": "Cloud offerings"
- *         }
- *     ],
- *     "channel": [
- *         {
- *             "id": "13",
- *             "href": "http://serverlocation:port/marketSales/channel/13",
- *             "name": "Online Channel"
- *         }
- *     ],
- *     "place": [
- *         {
- *             "id": "12",
- *             "href": "http://serverlocation:port/marketSales/place/12",
- *             "name": "France"
- *         }
- *     ],
- *     "bundledProductOffering": [
- *         {
- *             "id": "15",
- *             "href": "http://serverlocation:port/catalogManagement/productOffering/15",
- *             "lifecycleStatus": "Active",
- *             "name": "Offering 15"
- *         },
- *         {
- *             "id": "64",
- *             "href": "http://serverlocation:port/catalogManagement/productOffering/64",
- *             "lifecycleStatus": "Active",
- *             "name": "Offering 64"
- *         }
- *     ],
- *     "serviceLevelAgreement": {
- *         "id": "28",
- *         "href": "http://serverlocation:port/slaManagement/serviceLevelAgreement/28",
- *         "name": "Standard SLA"
- *     },
- *     "productSpecification": {
- *         "id": "13",
- *         "href": "http://serverlocation:port/catalogManagement/productSpecification/13",
- *         "version": "2.0",
- *         "name": "specification product 1"
- *     },
- *     "serviceCandidate": [
- *         {
- *             "id": "13",
- *             "href": "http://serverlocation:port/catalogManagement/serviceCandidate/13",
- *             "version": "2.0",
- *             "name": "specification service 1"
- *         }
- *     ],
- *     "resourceCandidate": [
- *         {
- *             "id": "13",
- *             "href": "http://serverlocation:port/catalogManagement/resourceCandidate/13",
- *             "version": "2.0",
- *             "name": "specification resource 1"
- *         }
- *     ],
- *     "productOfferingTerm": [
- *         {
- *             "name": "12 Month",
- *             "description": "12 month contract",
- *             "duration": "12",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": "2013-06-19T00:00:00-04:00"
- *             }
- *         }
- *     ],
- *     "productOfferingPrice": [
- *         {
- *             "name": "Monthly Price",
- *             "description": "monthlyprice",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": "2013-06-19T00:00:00-04:00"
- *             },
- *             "priceType": "recurring",
- *             "unitOfMeasure": "",
- *             "price": {
- *                 "taxIncludedAmount": "12.00",
- *                 "dutyFreeAmount": "10.00",
- *                 "taxRate": "20.00",
- *                 "currencyCode": "EUR",
- *                 "percentage": 0
- *             },
- *             "recurringChargePeriod": "monthly"
- *         },
- *         {
- *             "name": "Usage Price",
- *             "description": "usageprice",
- *             "validFor": {
- *                 "startDateTime": "2013-04-19T16:42:23-04:00",
- *                 "endDateTime": "2013-06-19T00:00:00-04:00"
- *             },
- *             "priceType": "usage",
- *             "unitOfMeasure": "second",
- *             "price": {
- *                 "taxIncludedAmount": "12.00",
- *                 "dutyFreeAmount": "10.00",
- *                 "taxRate": "20.00",
- *                 "currencyCode": "EUR",
- *                 "percentage": 0
- *             },
- *             "recurringChargePeriod": "",
- *             "productOfferPriceAlteration": {
- *                 "name": "Shipping Discount",
- *                 "description": "One time shipping discount",
- *                 "validFor": {
- *                     "startDateTime": "2013-04-19T16:42:23.0Z"
- *                 },
- *                 "priceType": "One Time discount",
- *                 "unitOfMeasure": "",
- *                 "price": {
- *                     "percentage": 100
- *                 },
- *                 "recurringChargePeriod": "",
- *                 "priceCondition": "apply if total amount of the  order is greater than 300.00"
- *             }
- *         }
- *     ]
+ *     }
  * }
  *
  */
-@MappedSuperclass
-@XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ProductOffering extends AbstractCatalogEntity implements Serializable {
+@Embeddable
+public class ProductOfferingTerm implements Serializable {
     private final static long serialVersionUID = 1L;
 
-    private final static Logger logger = Logger.getLogger(ProductOffering.class.getName());
+    @Column(name = "OFFERING_TERM_NAME", nullable = true)
+    private String name;
 
-    @Column(name = "IS_BUNDLE", nullable = true)
-    private Boolean isBundle;
+    @Column(name = "OFFERING_TERM_DESCRIPTION", nullable = true)
+    private String description;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_PRODUCT_OFFER_R_CATEGORY", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
-    @EntityReferenceProperty(classId=Category.class)
-    private List<CatalogReference> category;
+    @Column(name = "TYPE", nullable = true)
+    private String type;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_PRODUCT_OFFER_R_CHANNEL", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
-    private List<Channel> channel;
+    @Column(name = "IS_FULL_CUSTOM", nullable = true)
+    private Boolean isFullCustom;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_PRODUCT_OFFER_R_PLACE", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
-    private List<Place> place;
+    @Column(name = "EXCLUSIVITY", nullable = true)
+    private String exclusivity;
 
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_PRODUCT_OFFER_R_PRODUCT_OFFER", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
-    @EntityReferenceProperty(classId=ProductOffering.class)
-    private List<BundledProductReference> bundledProductOffering;
+    @Column(name = "REGION", nullable = true)
+    private String region;
 
-    @Embedded
-    private ServiceLevelAgreement serviceLevelAgreement;
+    @Column(name = "PURPOSE", nullable = true)
+    private String purpose;
 
-    @Embedded
+    @Column(name = "SECTOR", nullable = true)
+    private String sector;
+
+    @Column(name = "TRANSFERABILITY", nullable = true)
+    private String transferability;
+
+    @Column(name = "OFFERING_TERM_DURATION", nullable = true)
+    private String duration;
+
     @AttributeOverrides({
-        @AttributeOverride(name="referencedId", column=@Column(name = "SPECIFICATION_ID")),
-        @AttributeOverride(name="referencedVersion", column=@Column(name = "SPECIFICATION_VERSION")),
-        @AttributeOverride(name="referencedHref", column=@Column(name = "SPECIFICATION_HREF")),
-        @AttributeOverride(name="referencedName", column=@Column(name = "SPECIFICATION_NAME")),
-        @AttributeOverride(name="referencedDescription", column=@Column(name = "SPECIFICATION_DESCRIPTION"))
+        @AttributeOverride(name = "startDateTime", column = @Column(name = "OFFERING_TERM_START_DATE_TIME")),
+        @AttributeOverride(name = "endDateTime", column = @Column(name = "OFFERING_TERM_END_DATE_TIME"))
     })
-    @EntityReferenceProperty(classId=ProductSpecification.class)
-    private CatalogReference productSpecification;
+    private TimeRange validFor;
 
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name="referencedId", column=@Column(name = "SERVICE_CANDIDATE_ID")),
-        @AttributeOverride(name="referencedVersion", column=@Column(name = "SERVICE_CANDIDATE_VERSION")),
-        @AttributeOverride(name="referencedHref", column=@Column(name = "SERVICE_CANDIDATE_HREF")),
-        @AttributeOverride(name="referencedName", column=@Column(name = "SERVICE_CANDIDATE_NAME")),
-        @AttributeOverride(name="referencedDescription", column=@Column(name = "SERVICE_CANDIDATE_DESCRIPTION"))
-    })
-    @EntityReferenceProperty(classId=ServiceCandidate.class)
-    private CatalogReference serviceCandidate;
-
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name="referencedId", column=@Column(name = "RESOURCE_CANDIDATE_ID")),
-        @AttributeOverride(name="referencedVersion", column=@Column(name = "RESOURCE_CANDIDATE_VERSION")),
-        @AttributeOverride(name="referencedHref", column=@Column(name = "RESOURCE_CANDIDATE_HREF")),
-        @AttributeOverride(name="referencedName", column=@Column(name = "RESOURCE_CANDIDATE_NAME")),
-        @AttributeOverride(name="referencedDescription", column=@Column(name = "RESOURCE_CANDIDATE_DESCRIPTION"))
-    })
-    @EntityReferenceProperty(classId=ResourceCandidate.class)
-    private CatalogReference resourceCandidate;
-
-    @ElementCollection
-    @CollectionTable(name = "CRI_PRODUCT_OFFER_R_OFFERING_TERM", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
-    private List<ProductOfferingTerm> productOfferingTerm;
-
-    @Embedded
-    @ElementCollection
-    @CollectionTable(name = "CRI_PRODUCT_OFFER_R_PRICE", joinColumns = {
-        @JoinColumn(name = "CATALOG_ID", referencedColumnName = "CATALOG_ID"),
-        @JoinColumn(name = "CATALOG_VERSION", referencedColumnName = "CATALOG_VERSION"),
-        @JoinColumn(name = "ENTITY_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "ENTITY_VERSION", referencedColumnName = "VERSION")
-    })
-    private List<ProductOfferingPrice> productOfferingPrice;
-
-    public ProductOffering() {
+    public ProductOfferingTerm() {
     }
 
-    public Boolean getIsBundle() {
-        return isBundle;
+    public String getName() {
+        return name;
     }
 
-    public void setIsBundle(Boolean isBundle) {
-        this.isBundle = isBundle;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<CatalogReference> getCategory() {
-        return category;
+    public String getDescription() {
+        return description;
     }
 
-    public void setCategory(List<CatalogReference> category) {
-        this.category = category;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public List<Channel> getChannel() {
-        return channel;
+    public String getType() {
+        return type;
     }
 
-    public void setChannel(List<Channel> channel) {
-        this.channel = channel;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public List<Place> getPlace() {
-        return place;
+    public Boolean getIsFullCustom() {
+        return isFullCustom;
     }
 
-    public void setPlace(List<Place> place) {
-        this.place = place;
+    public void setIsFullCustom(Boolean isFullCustom) {
+        this.isFullCustom = isFullCustom;
     }
 
-    public List<BundledProductReference> getBundledProductOffering() {
-        return bundledProductOffering;
+    public String getExclusivity() {
+        return exclusivity;
     }
 
-    public void setBundledProductOffering(List<BundledProductReference> bundledProductOffering) {
-        this.bundledProductOffering = bundledProductOffering;
+    public void setExclusivity(String exclusivity) {
+        this.exclusivity = exclusivity;
     }
 
-    public ServiceLevelAgreement getServiceLevelAgreement() {
-        return serviceLevelAgreement;
+    public String getRegion() {
+        return region;
     }
 
-    public void setServiceLevelAgreement(ServiceLevelAgreement serviceLevelAgreement) {
-        this.serviceLevelAgreement = serviceLevelAgreement;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
-    public CatalogReference getProductSpecification() {
-        return productSpecification;
+    public String getPurpose() {
+        return purpose;
     }
 
-    public void setProductSpecification(CatalogReference productSpecification) {
-        this.productSpecification = productSpecification;
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 
-    public CatalogReference getServiceCandidate() {
-        return serviceCandidate;
+    public String getSector() {
+        return sector;
     }
 
-    public void setServiceCandidate(CatalogReference serviceCandidate) {
-        this.serviceCandidate = serviceCandidate;
+    public void setSector(String sector) {
+        this.sector = sector;
     }
 
-    public CatalogReference getResourceCandidate() {
-        return resourceCandidate;
+    public String getTransferability() {
+        return transferability;
     }
 
-    public void setResourceCandidate(CatalogReference resourceCandidate) {
-        this.resourceCandidate = resourceCandidate;
+    public void setTransferability(String transferability) {
+        this.transferability = transferability;
     }
 
-    public List<ProductOfferingTerm> getProductOfferingTerm() {
-        return productOfferingTerm;
+    public String getDuration() {
+        return duration;
     }
 
-    public void setProductOfferingTerm(List<ProductOfferingTerm> productOfferingTerm) {
-        this.productOfferingTerm = productOfferingTerm;
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 
-    public List<ProductOfferingPrice> getProductOfferingPrice() {
-        return productOfferingPrice;
+    public TimeRange getValidFor() {
+        return validFor;
     }
 
-    public void setProductOfferingPrice(List<ProductOfferingPrice> productOfferingPrice) {
-        this.productOfferingPrice = productOfferingPrice;
-    }
-
-    @JsonProperty(value = "category")
-    public List<CatalogReference> categoryToJson() {
-        return (category != null && category.size() > 0) ? category : null;
-    }
-
-    @JsonProperty(value = "channel")
-    public List<Channel> channelToJson() {
-        return (channel != null && channel.size() > 0) ? channel : null;
-    }
-
-    @JsonProperty(value = "place")
-    public List<Place> placeToJson() {
-        return (place != null && place.size() > 0) ? place : null;
-    }
-
-    @JsonProperty(value = "bundledProductOffering")
-    public List<BundledProductReference> bundledProductOfferingToJson() {
-        return (bundledProductOffering != null && bundledProductOffering.size() > 0) ? bundledProductOffering : null;
-    }
-
-    @JsonProperty(value = "productOfferingTerm")
-    public List<ProductOfferingTerm> productOfferingTermToJson() {
-        return (productOfferingTerm != null && productOfferingTerm.size() > 0) ? productOfferingTerm : null;
-    }
-
-    @JsonProperty(value = "productOfferingPrice")
-    public List<ProductOfferingPrice> productOfferingPriceToJson() {
-        return (productOfferingPrice != null && productOfferingPrice.size() > 0) ? productOfferingPrice : null;
+    public void setValidFor(TimeRange validFor) {
+        this.validFor = validFor;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
+        int hash = 3;
 
-        hash = 73 * hash + super.hashCode();
-
-        hash = 73 * hash + (this.isBundle != null ? this.isBundle.hashCode() : 0);
-        hash = 73 * hash + (this.category != null ? this.category.hashCode() : 0);
-        hash = 73 * hash + (this.channel != null ? this.channel.hashCode() : 0);
-        hash = 73 * hash + (this.place != null ? this.place.hashCode() : 0);
-        hash = 73 * hash + (this.bundledProductOffering != null ? this.bundledProductOffering.hashCode() : 0);
-        hash = 73 * hash + (this.serviceLevelAgreement != null ? this.serviceLevelAgreement.hashCode() : 0);
-        hash = 73 * hash + (this.productSpecification != null ? this.productSpecification.hashCode() : 0);
-        hash = 73 * hash + (this.serviceCandidate != null ? this.serviceCandidate.hashCode() : 0);
-        hash = 73 * hash + (this.resourceCandidate != null ? this.resourceCandidate.hashCode() : 0);
-        hash = 73 * hash + (this.productOfferingTerm != null ? this.productOfferingTerm.hashCode() : 0);
-        hash = 73 * hash + (this.productOfferingPrice != null ? this.productOfferingPrice.hashCode() : 0);
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 53 * hash + (this.isFullCustom != null ? this.isFullCustom.hashCode() : 0);
+        hash = 53 * hash + (this.exclusivity != null ? this.exclusivity.hashCode() : 0);
+        hash = 53 * hash + (this.region != null ? this.region.hashCode() : 0);
+        hash = 53 * hash + (this.purpose != null ? this.purpose.hashCode() : 0);
+        hash = 53 * hash + (this.sector != null ? this.sector.hashCode() : 0);
+        hash = 53 * hash + (this.transferability != null ? this.transferability.hashCode() : 0);
+        hash = 53 * hash + (this.duration != null ? this.duration.hashCode() : 0);
+        hash = 53 * hash + (this.validFor != null ? this.validFor.hashCode() : 0);
 
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass() || super.equals(object) == false) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
 
-        final ProductOffering other = (ProductOffering) object;
-        if (Utilities.areEqual(this.isBundle, other.isBundle) == false) {
+        final ProductOfferingTerm other = (ProductOfferingTerm) object;
+        if (Utilities.areEqual(this.name, other.name) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.category, other.category) == false) {
+        if (Utilities.areEqual(this.description, other.description) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.channel, other.channel) == false) {
+        if (Utilities.areEqual(this.type, other.type) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.place, other.place) == false) {
+        if (Utilities.areEqual(this.isFullCustom, other.isFullCustom) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.bundledProductOffering, other.bundledProductOffering) == false) {
+        if (Utilities.areEqual(this.exclusivity, other.exclusivity) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.serviceLevelAgreement, other.serviceLevelAgreement) == false) {
+        if (Utilities.areEqual(this.region, other.region) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.productSpecification, other.productSpecification) == false) {
+        if (Utilities.areEqual(this.purpose, other.purpose) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.serviceCandidate, other.serviceCandidate) == false) {
+        if (Utilities.areEqual(this.sector, other.sector) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.resourceCandidate, other.resourceCandidate) == false) {
+        if (Utilities.areEqual(this.transferability, other.transferability) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.productOfferingTerm, other.productOfferingTerm) == false) {
+        if (Utilities.areEqual(this.duration, other.duration) == false) {
             return false;
         }
 
-        if (Utilities.areEqual(this.productOfferingPrice, other.productOfferingPrice) == false) {
+        if (Utilities.areEqual(this.validFor, other.validFor) == false) {
             return false;
         }
 
@@ -481,140 +231,20 @@ public class ProductOffering extends AbstractCatalogEntity implements Serializab
 
     @Override
     public String toString() {
-        return "ProductOffering{<" + super.toString() + ">, isBundle=" + isBundle + ", category=" + category + ", channel=" + channel + ", place=" + place + ", bundledProductOffering=" + bundledProductOffering + ", serviceLevelAgreement=" + serviceLevelAgreement + ", productSpecification=" + productSpecification + ", serviceCandidate=" + serviceCandidate + ", resourceCandidate=" + resourceCandidate + ", productOfferingTerm=" + productOfferingTerm + ", productOfferingPrice=" + productOfferingPrice + '}';
+        return "ProductOfferingTerm{" + "name=" + name + ", description=" + description + ", type=" + type + ", full custom=" + isFullCustom 
+            + ", exclusivity=" + exclusivity + ", region=" + region + ", purpose=" + purpose + ", sector=" + sector 
+            + ", transferability=" + transferability + ", duration=" + duration + ", validFor=" + validFor + '}';
     }
 
-    @Override
-    @JsonIgnore
-    public Logger getLogger() {
-        return logger;
-    }
+    public static ProductOfferingTerm createProto() {
+        ProductOfferingTerm productOfferingTerm = new ProductOfferingTerm();
 
-    @Override
-    @JsonIgnore
-    public void setCreateDefaults() {
-        super.setCreateDefaults();
+        productOfferingTerm.name = "name";
+        productOfferingTerm.description = "description";
+        productOfferingTerm.duration = "12";
+        productOfferingTerm.validFor = TimeRange.createProto();
 
-        if (isBundle == null) {
-            isBundle = false;
-        }
-    }
-
-    public void edit(ProductOffering input) {
-        if (input == null || input == this) {
-            return;
-        }
-
-        super.edit(input);
-
-        if (this.isBundle == null) {
-            this.isBundle = input.isBundle;
-        }
-
-        if (this.category == null) {
-            this.category = input.category;
-        }
-
-        if (this.channel == null) {
-            this.channel = input.channel;
-        }
-
-        if (this.place == null) {
-            this.place = input.place;
-        }
-
-        if (this.bundledProductOffering == null) {
-            this.bundledProductOffering = input.bundledProductOffering;
-        }
-
-        if (this.serviceLevelAgreement == null) {
-            this.serviceLevelAgreement = input.serviceLevelAgreement;
-        }
-
-        if (this.productSpecification == null) {
-            this.productSpecification = input.productSpecification;
-        }
-
-        if (this.serviceCandidate == null) {
-            this.serviceCandidate = input.serviceCandidate;
-        }
-
-        if (this.resourceCandidate == null) {
-            this.resourceCandidate = input.resourceCandidate;
-        }
-
-        if (this.productOfferingTerm == null) {
-            this.productOfferingTerm = input.productOfferingTerm;
-        }
-
-        if (this.productOfferingPrice == null) {
-            this.productOfferingPrice = input.productOfferingPrice;
-        }
-    }
-
-    @Override
-    @JsonIgnore
-    public boolean isValid() {
-        logger.log(Level.FINE, "ProductOffering:valid ()");
-
-        if (super.isValid() == false) {
-            return false;
-        }
-
-        if (this.isBundle == Boolean.TRUE) {
-            if (Utilities.hasContents(this.bundledProductOffering) == false) {
-                logger.log(Level.FINE, " invalid: bundledProductOffering must be specified when isBundle is true");
-                return false;
-            }
-        }
-        else {
-            if (Utilities.hasContents(this.bundledProductOffering) == true) {
-                logger.log(Level.FINE, " invalid: bundledProductOffering must not be specififed when isBundle is false");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static ProductOffering createProto() {
-        ProductOffering productOffering = new ProductOffering();
-
-        productOffering.setId("id");
-        productOffering.setVersion("3.43");
-        productOffering.setHref("href");
-        productOffering.setName("name");
-        productOffering.setDescription("description");
-        productOffering.setLastUpdate(new Date());
-        productOffering.setLifecycleStatus(LifecycleStatus.ACTIVE);
-        productOffering.setValidFor(TimeRange.createProto());
-
-        productOffering.isBundle = true;
-
-        productOffering.category = new ArrayList<CatalogReference>();
-        productOffering.category.add(CatalogReference.createProto());
-
-        productOffering.channel = new ArrayList<Channel>();
-        productOffering.channel.add(Channel.createProto());
-
-        productOffering.place = new ArrayList<Place>();
-        productOffering.place.add(Place.createProto());
-
-        productOffering.bundledProductOffering = new ArrayList<BundledProductReference>();
-        productOffering.bundledProductOffering.add(BundledProductReference.createProto());
-
-        productOffering.serviceLevelAgreement = ServiceLevelAgreement.createProto();
-        productOffering.productSpecification = CatalogReference.createProto();
-        productOffering.serviceCandidate = CatalogReference.createProto();
-        productOffering.resourceCandidate = CatalogReference.createProto();
-
-        productOffering.productOfferingTerm = new ArrayList<ProductOfferingTerm>();
-        productOffering.productOfferingTerm.add(ProductOfferingTerm.createProto());
-
-        productOffering.productOfferingPrice = new ArrayList<ProductOfferingPrice>();
-        productOffering.productOfferingPrice.add(ProductOfferingPrice.createProto());
-
-        return productOffering;
+        return productOfferingTerm;
     }
 
 }
