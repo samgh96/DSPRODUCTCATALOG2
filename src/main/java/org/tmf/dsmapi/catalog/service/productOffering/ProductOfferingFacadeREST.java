@@ -293,7 +293,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
             manager.edit(input);
             
             publisher.updateNotification(input, null, null);
-            return Response.status(Response.Status.CREATED).entity(entity).build();
+            return Response.status(Response.Status.OK).entity(entity).build();
         }
 
         if (input.hasHigherVersionThan(entity) == false) {
@@ -308,7 +308,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
         manager.edit(input);
 
         publisher.updateNotification(input, null, null);
-        return Response.status(Response.Status.CREATED).entity(input).build();
+        return Response.status(Response.Status.OK).entity(input).build();
     }
 
     /*
@@ -347,7 +347,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
             manager.edit(input);
             
             publisher.valueChangedNotification(input, null, null);
-            return Response.status(Response.Status.CREATED).entity(entity).build();
+            return Response.status(Response.Status.OK).entity(entity).build();
         }
 
         if (input.hasHigherVersionThan(entity) == false) {
@@ -361,7 +361,7 @@ public class ProductOfferingFacadeREST extends AbstractFacadeREST<ProductOfferin
         manager.create(input);
 
         publisher.valueChangedNotification(input, null, null);
-        return Response.status(Response.Status.CREATED).entity(input).build();
+        return Response.status(Response.Status.OK).entity(input).build();
     }
 
     /*
