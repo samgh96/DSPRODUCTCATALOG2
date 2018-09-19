@@ -116,7 +116,11 @@ public abstract class AbstractFacadeREST<T extends AbstractEntity> {
         }
 
         // Check if a server has been configured
-        String defaultServer = properties.getServer();
+        String defaultServer = System.getenv("BAE_SERVICE_HOST");
+
+        if (defaultServer == null) {
+            defaultServer = properties.getServer();
+        }
 
         if (defaultServer != null) {
             // Replace protocol and host in the HREF to use configured server
