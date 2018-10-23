@@ -1,6 +1,9 @@
 package org.tmf.dsmapi.catalog.service;
 
+import javax.ejb.EJB;
 import java.net.URI;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,6 +19,7 @@ import org.tmf.dsmapi.catalog.resource.LifecycleStatus;
 import org.tmf.dsmapi.catalog.exception.IllegalLifecycleStatusException;
 import org.tmf.dsmapi.commons.FieldSelector;
 import org.tmf.dsmapi.commons.ParsedVersion;
+import org.tmf.dsmapi.commons.PropertiesSingleton;
 import org.tmf.dsmapi.commons.QueryParameterParser;
 import org.tmf.dsmapi.commons.ReferencedEntityGetter;
 
@@ -27,6 +31,9 @@ import org.tmf.dsmapi.commons.ReferencedEntityGetter;
 public abstract class AbstractFacadeREST<T extends AbstractEntity> {
     private final FieldSelector fieldSelector;
     private final ReferencedEntityGetter<T> referencedEntityGetter;
+
+    @EJB
+    private PropertiesSingleton properties;
 
     /*
      *
@@ -84,28 +91,52 @@ public abstract class AbstractFacadeREST<T extends AbstractEntity> {
      *
      */
     public String buildHref(UriInfo uriInfo, String id, ParsedVersion parsedVersion) {
+        // If the URL is not configured in the properties use UriInfo object
         URI uri = (uriInfo != null) ? uriInfo.getBaseUri() : null;
-        String basePath = (uri != null) ? uri.toString() : null;
-        if (basePath == null) {
+        String baseUrl = (uri != null) ? uri.toString() : null;
+
+        if (baseUrl == null) {
             return null;
         }
 
-        if (!basePath.endsWith("/")) {
-            basePath += "/";
+        if (!baseUrl.endsWith("/")) {
+            baseUrl += "/";
         }
 
-        basePath += getRelativeEntityContext() + "/";
+        baseUrl += getRelativeEntityContext() + "/";
+
         if (id == null || id.length() <= 0) {
-            return (basePath);
+            return (baseUrl);
         }
 
-        basePath += id;
+        baseUrl += id;
         String version = (parsedVersion != null) ? parsedVersion.getExternalView() : null;
-        if (version == null || version.length() <= 0) {
-            return basePath;
+        if (version != null && version.length() > 0) {
+            baseUrl +=  ":(" + version + ")";
         }
 
-        return basePath + ":(" + version + ")";
+        // Check if a server has been configured
+        String defaultServer = System.getenv("BAE_SERVICE_HOST");
+
+        if (defaultServer == null) {
+            defaultServer = properties.getServer();
+        }
+
+        if (defaultServer != null) {
+            // Replace protocol and host in the HREF to use configured server
+            URL defURL;
+            URL queriedURL;
+            try {
+                defURL = new URL(defaultServer);
+                queriedURL = new URL(baseUrl);
+            } catch(MalformedURLException e) {
+                return null;
+            }
+
+            baseUrl = defURL.getProtocol() + "://" + defURL.getAuthority() + queriedURL.getPath();
+        }
+
+        return baseUrl;
     }
 
     /*
