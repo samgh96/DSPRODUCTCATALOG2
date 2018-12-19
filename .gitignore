@@ -2,3 +2,5 @@
 /dist/
 /nbproject/
 /target/
+/bin/
+*.DS_Store
